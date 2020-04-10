@@ -1,0 +1,142 @@
+<?page title="New PO" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="New PO" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('vmd.TPoDetailVmd')">
+	<hlayout>
+		<button label="Back" onClick="@command('back')"></button>
+		<button label="Save" onClick="@command('saveOrder')"></button>
+	</hlayout>
+	<space></space>
+	<grid>
+		<columns>
+			<column label=""></column>
+			<column label=""></column>
+			<column label=""></column>
+			<column label=""></column>
+			
+		</columns>
+		<rows>
+			<row>
+				<label value="PO No"></label>
+				<textbox value="@bind(vm.dto.poNo)" constraint="no empty" readonly="@load(vm.dto.poNo eq null ? false:true)"></textbox>
+				<label value="PO Date"></label>
+				<datebox readonly="true" lenient="false"
+						buttonVisible="true"
+						value="@bind(vm.dto.poDate) @save(vm.dto.poDate,before='save')"
+						constraint="no empty: Harap Diisi" />
+			</row>
+			<row>
+				<label value="Supplier Name"></label>
+				<combobox model="@bind(vm.supplier)" value="@bind(vm.dto.supName)" selectedItem="@bind(vm.sup)" readonly="true">
+					<template name="model">
+						<comboitem label="@bind(each.supName)" value="@bind(each.supId)"/>
+					</template>
+				</combobox>
+				<label value="PO Exp Date"></label>
+				<datebox readonly="true" lenient="false"
+						buttonVisible="true"
+						value="@bind(vm.dto.poExpDate) @save(vm.dto.poExpDate,before='save')"
+						constraint="no empty: Harap Diisi" 
+						onChange="@command('getAgingVal')"/>
+			</row>
+			<row>
+				<label value="Address"></label>
+				<textbox value="@bind(vm.sup.supAddress)" ></textbox>
+				<label value="Aging"></label>
+				<textbox value="@bind(vm.dto.aging)"/>
+			</row>
+			<row>
+				<label value="Province"></label>
+				<combobox model="@bind(vm.province)" value="@bind(vm.prov.provName)" selectedItem="@bind(vm.prov)" readonly="true">
+					<template name="model">
+						<comboitem label="@bind(each.provName)" value="@bind(each.provId)"/>
+					</template>
+				</combobox>
+				<label value="Shipment:" />
+					<radiogroup
+						selectedItem="@bind(vm.dto.poShipment)">
+						<radio label="Full" value="F" />
+						<radio label="Partial" value="P" />
+					</radiogroup>
+			</row>
+			<row>
+				<label value="City"></label>
+				<combobox model="@bind(vm.cities)" value="@bind(vm.city.cityName)" selectedItem="@bind(vm.city)" readonly="true">
+					<template name="model">
+						<comboitem label="@bind(each.cityName)" value="@bind(each.cityId)"/>
+					</template>
+				</combobox>
+				<label value="Notes"></label>
+				<textbox value="@bind(vm.dto.poNotes)" constraint="no empty" readonly="@load(vm.dto.poNotes eq null ? false:true)"></textbox>
+				
+			</row>
+		</rows>
+	</grid>
+	<space></space>
+	<hlayout>
+		<button label="Add" onClick="@command('showModal')"></button>
+		<button label="Delete" onClick="@command('deleteDetail')"></button>
+	</hlayout>
+	<space></space>
+	<listbox mold="paging" pageSize="3" pagingPosition="bottom" model="@load(vm.details)" selectedItem="@bind(vm.detail)" emptyMessage="No Item yet">
+		<listhead sizable="true">
+			<listheader label="Item Name"></listheader>
+			<listheader label="Price"></listheader>
+			<listheader label="Qty"></listheader>
+			<listheader label="Subtotal"></listheader>
+		</listhead>
+		<template name="model">
+			<listitem>
+				<listcell label="@load(each.itemName)"></listcell>
+				<listcell label="@load(each.itemPrice)"></listcell>
+				<listcell label="@load(each.itemQty)"></listcell>
+				<listcell label="@load(each.subtotal)"></listcell>
+			</listitem>
+		</template>
+	</listbox>
+	<window width="400px" title="Item" border="normal" visible="@bind(vm.statusModal)" mode="modal" contentStyle="overflow:auto"
+	style="-webkit-box-shadow: 1px 1px 10px 3px #969696;box-shadow: 1px 1px 10px 3px #969696" xmlns:w="client">
+		<grid>
+			<columns>
+				<column width="30%" align="right" label=""></column>
+				<column width="70%" label=""></column>
+			</columns>
+			<rows>
+				<row>
+					<label value="Item Name"></label>
+					<combobox model="@bind(vm.items)" onSelect="@command('selectItem')" selectedItem="@bind(vm.item)" readonly="true">
+						<template name="model">
+							<comboitem label="@load(each.itemName)"/>
+						</template>
+					</combobox>
+				</row>
+				<row>
+					<label value="Price"></label>
+					<textbox readonly="true" value="@bind(vm.detail.itemPrice)" id="price"></textbox>
+				</row>
+				<row>
+					<label value="Qty"></label>
+					<textbox value="@bind(vm.detail.itemQty)" onBlur="@command('countSub')"></textbox>
+				</row>
+				<row>
+					<label value="Subtotal"></label>
+					<textbox readonly="true"  value="@bind(vm.detail.subtotal)" id="subtotal" > </textbox>
+				</row>
+			</rows>
+		</grid>
+		<div align="center">
+			<hlayout>
+				<button label="Save" onClick="@command('saveDetail')"></button>
+				<button label="Back" onClick="@command('backModal')"></button>
+			</hlayout>
+		</div>
+	</window>
+	
+		<div align="right">
+			<label value="Diskon: "></label>
+			<textbox value="@bind(vm.dto.discount)" onChange="@command('getChangeTotal')"></textbox>
+			<space></space>
+			<label value="Subtotal: "></label>
+			<textbox value="@bind(vm.dto.total) "></textbox>
+		</div>
+</window>
+</zk>

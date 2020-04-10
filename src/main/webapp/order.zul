@@ -1,0 +1,34 @@
+<?page title="Daftar Transaksi" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="Daftar Transaksi" border="normal" 
+apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('vmd.TPoVmd')">
+	<hlayout>
+		<button label="Hapus" onClick="@command('delete')"></button>
+		<button label="Tambah" onClick="@command('add')"></button>
+		<button label="Edit" onClick="@command('edit')"></button>
+	</hlayout>
+	<separator></separator>
+	<hlayout>
+		<textbox value="@bind(vm.cari)" onOK="@command('cari')"/>
+		<button label="Search" onClick="@command('cari')"></button>
+	</hlayout>
+	
+	<separator></separator>
+	<listbox mold="paging" pageSize="5" pagingPosition="bottom" model="@load(vm.list)" selectedItem="@bind(vm.dto)" emptyMessage="Data not available">
+		<listhead sizable="true">
+			<listheader label="PO No"></listheader>
+			<listheader label="Supplier Name"></listheader>
+			<listheader label="PO Date"></listheader>
+			<listheader label="Total"></listheader>
+		</listhead>
+		<template name="model">
+			<listitem>
+				<listcell label="@load(each.poNo)"></listcell>
+				<listcell label="@load(each.supName)"></listcell>
+				<listcell label="@load(each.poDate) @converter('formatedDate', format='dd-MMMM-yyyy')"></listcell>
+				<listcell label="@load(each.total) @converter('formatedNumber',format='#,##0')"></listcell>
+			</listitem>
+		</template>
+	</listbox>
+</window>
+</zk>
